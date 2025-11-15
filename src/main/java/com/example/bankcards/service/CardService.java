@@ -3,12 +3,10 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.repository.CardRepository;
-import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,12 +14,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CardService {
     private final CardRepository cardRepository;
+    private final UserValidatorService userValidatorService;
     @Transactional(readOnly = true)
     public List<CardDto> findAllCards() {
         return cardRepository.findAll().stream().map(this::toCardDto).toList();
     }
     @Transactional(readOnly = true)
     public List<CardDto> findCardsByUser(UUID id) {
+        userValidatorService.validateUserExistsById(id);
         return cardRepository.findByUserId(id).stream().map(this::toCardDto).toList();
     }
 

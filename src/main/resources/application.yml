@@ -26,5 +26,9 @@ token:
 app:
   user:
     exception-message:
-      not-found:
-        byId: "User not found by id"
+      not-found-by:
+        Id: "User with this ID was not found"
+        Username: "User with this username was not found"
+      already-exists:
+        by-email: "User with this email already exists"
+        by-username: "User with this username already exists"
