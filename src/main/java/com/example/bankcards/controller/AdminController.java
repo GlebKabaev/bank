@@ -6,6 +6,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.service.CardService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,12 @@ public class AdminController {
     private final CardService cardService;
 
     @GetMapping("/card")
-    public List<CardDto> getAllCards() {
-        return cardService.findAllCards();
+    public ResponseEntity<List<CardDto>> getAllCards() {
+        return ResponseEntity.ok(cardService.findAllCards());
     }
 
     @GetMapping("/card/user/{userID}")
-    public List<CardDto> getAllUserCards(@PathVariable("userID") UUID userID) {
-        return cardService.findCardsByUser(userID);
+    public ResponseEntity<List<CardDto>> getAllUserCards(@PathVariable("userID") UUID userID) {
+        return ResponseEntity.ok(cardService.findCardsByUser(userID));
     }
 }
