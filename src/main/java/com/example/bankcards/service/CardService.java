@@ -3,6 +3,7 @@ package com.example.bankcards.service;
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
