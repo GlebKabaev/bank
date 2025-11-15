@@ -19,7 +19,7 @@ public class Card {
     @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "number", nullable = false)
+    @Column(name = "number", nullable = false,unique = true)
     private String number; // TODO хранится зашифрованным
 
     @Column(nullable = false)

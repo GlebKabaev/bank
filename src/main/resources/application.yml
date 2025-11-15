@@ -29,6 +29,15 @@ app:
       not-found-by:
         Id: "User with this ID was not found"
         Username: "User with this username was not found"
-      already-exists:
-        by-email: "User with this email already exists"
-        by-username: "User with this username already exists"
+      already-exists-by:
+        email: "User with this email already exists"
+        username: "User with this username already exists"
+  card:
+    exception-message:
+      already-exists-by:
+        Id: "Card with this ID was not found"
+        number: "Card with this number already exists"
+      not-found-by:
+        Id: "Card with this ID already exists"
+        number: "Card with this number was not found"
+

@@ -19,8 +19,8 @@ public class UserValidatorService {
     public UserValidatorService(UserRepository userRepository,
                                 @Value("${app.user.exception-message.not-found-by.Id}") String notExistsByIdExceptionMessage,
                                 @Value("${app.user.exception-message.not-found-by.Username}") String notExistsByUsernameExceptionMessage,
-                                @Value("${app.user.exception-message.already-exists.by-username}") String alreadyExistsByUsername,
-                                @Value("${app.user.exception-message.already-exists.by-email}") String alreadyExistsByEmail) {
+                                @Value("${app.user.exception-message.already-exists-by.username}") String alreadyExistsByUsername,
+                                @Value("${app.user.exception-message.already-exists-by.email}") String alreadyExistsByEmail) {
         this.userRepository = userRepository;
         this.notExistsByIdExceptionMessage = notExistsByIdExceptionMessage;
         this.notExistsByUsernameExceptionMessage = notExistsByUsernameExceptionMessage;
