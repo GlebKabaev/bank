@@ -19,7 +19,7 @@ public class UserValidatorService {
     }
 
     public boolean isUserExistById(UUID id) {
-        if (userRepository.existsById(id)){
+        if (!userRepository.existsById(id)){
             throw  new UserNotFoundException(exceptionMessage);
         }
         return true;
