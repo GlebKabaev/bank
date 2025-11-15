@@ -30,4 +30,9 @@ public class AdminController {
     public ResponseEntity<List<CardDto>> getAllUserCards(@PathVariable("userID") UUID userID) {
         return ResponseEntity.ok(cardService.findCardsByUser(userID));
     }
+    @DeleteMapping("/card/{cardId}")
+    public ResponseEntity<Void> deleteCard(@PathVariable UUID cardId) {
+        cardService.deleteCard(cardId);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -15,14 +15,21 @@ import java.util.UUID;
 public class CardService {
     private final CardRepository cardRepository;
     private final UserValidatorService userValidatorService;
+
     @Transactional(readOnly = true)
     public List<CardDto> findAllCards() {
         return cardRepository.findAll().stream().map(this::toCardDto).toList();
     }
+
     @Transactional(readOnly = true)
     public List<CardDto> findCardsByUser(UUID id) {
         userValidatorService.validateUserExistsById(id);
         return cardRepository.findByUserId(id).stream().map(this::toCardDto).toList();
+    }
+
+    @Transactional
+    public void deleteCard(UUID id) {
+        cardRepository.deleteById(id);
     }
 
     public CardDto toCardDto(Card card) {
