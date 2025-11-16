@@ -1,14 +1,13 @@
 package com.example.bankcards.service;
 
 import com.example.bankcards.entity.Card;
-import com.example.bankcards.exception.CardAlreadyExistsException;
-import com.example.bankcards.exception.CardNotFoundException;
-import com.example.bankcards.exception.WrongCardOwnerException;
+import com.example.bankcards.exception.*;
 import com.example.bankcards.repository.CardRepository;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -18,16 +17,23 @@ public class CardValidatorService {
     private final String cardNotFoundByNumberMessage;
     private final String cardNotFoundByIdMessage;
     private final String wrongCardOwnerException;
+    private final String cardEqualIdExceptionMessage;
+    private final String notEnoughBalanceExceptionMessage;
+
     public CardValidatorService(@Value("${app.card.exception-message.already-exists-by.number}") String cardExistsByNumberMessage,
                                 CardRepository cardRepository,
                                 @Value("${app.card.exception-message.not-found-by.number}") String cardNotFoundByNumberMessage,
                                 @Value("${app.card.exception-message.not-found-by.Id}") String cardNotFoundByIdMessage,
-                                @Value("${app.card.exception-message.wrong-owner-exception}") String wrongCardOwnerException) {
+                                @Value("${app.card.exception-message.wrong-owner-exception}") String wrongCardOwnerException,
+                                @Value("${app.card.exception-message.equal-id}") String cardEqualIdExceptionMessage,
+                                @Value("${app.card.exception-message.not-enough-balance}") String notEnoughBalanceExceptionMessage) {
         this.cardExistsByNumberMessage = cardExistsByNumberMessage;
         this.cardRepository = cardRepository;
         this.cardNotFoundByNumberMessage = cardNotFoundByNumberMessage;
         this.cardNotFoundByIdMessage = cardNotFoundByIdMessage;
         this.wrongCardOwnerException = wrongCardOwnerException;
+        this.cardEqualIdExceptionMessage = cardEqualIdExceptionMessage;
+        this.notEnoughBalanceExceptionMessage = notEnoughBalanceExceptionMessage;
     }
 
     public void ensureCardNotExistsByNumber(String number) {
@@ -47,10 +53,30 @@ public class CardValidatorService {
             throw new CardNotFoundException(cardNotFoundByIdMessage);
         }
     }
-    public void validateCardMatchWithUser(Card card){
-        if (!card.getUser().getCards().getFirst().getOwner().equals(card.getOwner())&& !card.getUser().getCards().isEmpty()){
+
+    public void validateCardMatchWithUser(Card card) {
+        if (!card.getUser().getCards().isEmpty() && !card.getUser().getCards().getFirst().getOwner().equals(card.getOwner())) {
             throw new WrongCardOwnerException(wrongCardOwnerException);
         }
+    }
+
+    public void ensureCardIdNotEquals(UUID card1, UUID card2) {
+        if (card1.equals(card2)) {
+            throw new CardException(cardEqualIdExceptionMessage);
+        }
+    }
+
+    public void validateTransfer(Card from, Card to, BigDecimal amount) {
+        if(from == null){
+            throw new CardNotFoundException(cardNotFoundByIdMessage);
+        }
+        if(to == null){
+            throw new CardNotFoundException(cardNotFoundByIdMessage);
+        }
+        if (from.getBalance().compareTo(amount) < 0) {
+            throw new NotEnoughBalanceException(notEnoughBalanceExceptionMessage);
+        }
+
     }
 
 }

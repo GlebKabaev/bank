@@ -41,4 +41,5 @@ app:
         Id: "Card with this ID already exists"
         number: "Card with this number was not found"
       wrong-owner-exception: "The card owner doesn’t match the user’s card owner."
-
+      equal-id: "These cards are the same"
+      not-enough-balance: "Insufficient funds"

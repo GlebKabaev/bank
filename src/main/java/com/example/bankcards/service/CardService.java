@@ -2,6 +2,7 @@ package com.example.bankcards.service;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.MoneyTransferDto;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
@@ -11,8 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +26,7 @@ public class CardService {
     private final CardValidatorService cardValidatorService;
     private final UserValidatorService userValidatorService;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional(readOnly = true)
     public List<CardDto> findAllCards() {
@@ -91,5 +97,26 @@ public class CardService {
     private String maskCardNumber(String number) {
         int len = number.length();
         return "**** **** **** " + number.substring(len - 4);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CardDto> getUsersCard() {
+        return userService.getCurrentUser().getCards().stream().map(this::toCardDto).toList();
+    }
+
+    @Transactional
+    public void moneyTransfer(MoneyTransferDto moneyTransferDto) {
+        UUID from = moneyTransferDto.getFromCardId();
+        UUID to = moneyTransferDto.getToCardId();
+        BigDecimal amount = moneyTransferDto.getAmount();
+        cardValidatorService.ensureCardIdNotEquals(from, to);
+        Map<UUID, Card> cardById = userService.getCurrentUser().getCards().stream()
+                .collect(Collectors.toMap(Card::getId, Function.identity()));
+        Card fromCard = cardById.get(from);
+        Card toCard = cardById.get(to);
+        cardValidatorService.validateTransfer(fromCard, toCard, amount);
+        fromCard.setBalance(fromCard.getBalance().subtract(amount));
+        toCard.setBalance(toCard.getBalance().add(amount));
+
     }
 }
