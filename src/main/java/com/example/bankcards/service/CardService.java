@@ -42,17 +42,20 @@ public class CardService {
     @Transactional
     public void createCard(CreateCardRequest card) {
         cardValidatorService.ensureCardNotExistsByNumber(card.getNumber());
-        cardRepository.save(toCardEntity(card));
+        Card cardEntity = toCardEntity(card);
+        cardValidatorService.validateCardMatchWithUser(cardEntity);
+        cardRepository.save(cardEntity);
     }
+
     @Transactional
-    public void blockCard(UUID id){
+    public void blockCard(UUID id) {
         cardValidatorService.validateCardExistsById(id);
         Card card = cardRepository.findById(id).get();
         card.setStatus(CardStatus.BLOCKED);
     }
 
     @Transactional
-    public void activateCard(UUID id){
+    public void activateCard(UUID id) {
         cardValidatorService.validateCardExistsById(id);
         Card card = cardRepository.findById(id).get();
         card.setStatus(CardStatus.ACTIVE);
