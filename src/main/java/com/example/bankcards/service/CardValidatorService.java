@@ -1,5 +1,6 @@
 package com.example.bankcards.service;
 
+import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.exception.*;
 import com.example.bankcards.repository.CardRepository;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -19,6 +21,7 @@ public class CardValidatorService {
     private final String wrongCardOwnerException;
     private final String cardEqualIdExceptionMessage;
     private final String notEnoughBalanceExceptionMessage;
+    private final String wrongCardExpiryDate;
 
     public CardValidatorService(@Value("${app.card.exception-message.already-exists-by.number}") String cardExistsByNumberMessage,
                                 CardRepository cardRepository,
@@ -26,7 +29,8 @@ public class CardValidatorService {
                                 @Value("${app.card.exception-message.not-found-by.Id}") String cardNotFoundByIdMessage,
                                 @Value("${app.card.exception-message.wrong-owner-exception}") String wrongCardOwnerException,
                                 @Value("${app.card.exception-message.equal-id}") String cardEqualIdExceptionMessage,
-                                @Value("${app.card.exception-message.not-enough-balance}") String notEnoughBalanceExceptionMessage) {
+                                @Value("${app.card.exception-message.not-enough-balance}") String notEnoughBalanceExceptionMessage,
+                                @Value("${app.card.exception-message.card-expiry}") String wrongCardExpiryDate) {
         this.cardExistsByNumberMessage = cardExistsByNumberMessage;
         this.cardRepository = cardRepository;
         this.cardNotFoundByNumberMessage = cardNotFoundByNumberMessage;
@@ -34,6 +38,7 @@ public class CardValidatorService {
         this.wrongCardOwnerException = wrongCardOwnerException;
         this.cardEqualIdExceptionMessage = cardEqualIdExceptionMessage;
         this.notEnoughBalanceExceptionMessage = notEnoughBalanceExceptionMessage;
+        this.wrongCardExpiryDate = wrongCardExpiryDate;
     }
 
     public void ensureCardNotExistsByNumber(String number) {
@@ -56,7 +61,7 @@ public class CardValidatorService {
 
     public void validateCardMatchWithUser(Card card) {
         if (!card.getUser().getCards().isEmpty() && !card.getUser().getCards().getFirst().getOwner().equals(card.getOwner())) {
-            throw new WrongCardOwnerException(wrongCardOwnerException);
+            throw new CardOwnerException(wrongCardOwnerException);
         }
     }
 
@@ -67,16 +72,26 @@ public class CardValidatorService {
     }
 
     public void validateTransfer(Card from, Card to, BigDecimal amount) {
-        if(from == null){
+        if (from == null) {
             throw new CardNotFoundException(cardNotFoundByIdMessage);
         }
-        if(to == null){
+        if (to == null) {
             throw new CardNotFoundException(cardNotFoundByIdMessage);
         }
         if (from.getBalance().compareTo(amount) < 0) {
             throw new NotEnoughBalanceException(notEnoughBalanceExceptionMessage);
         }
 
+    }
+
+    public void validateCardCreate(CreateCardRequest card) {
+        ensureCardNotExistsByNumber(card.getNumber());
+        LocalDate today = LocalDate.now();
+        int todayYear = today.getYear();
+        int todayMonth = today.getMonthValue();
+        if ((card.getExpiryYear() == todayYear && card.getExpiryMonth() < todayMonth) || (card.getExpiryYear() < todayYear)) {
+            throw new CardExpiryDateException(wrongCardExpiryDate);
+        }
     }
 
 }

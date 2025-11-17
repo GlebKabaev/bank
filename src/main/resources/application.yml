@@ -35,11 +35,12 @@ app:
   card:
     exception-message:
       already-exists-by:
-        Id: "Card with this ID was not found"
+        Id: "Card with this ID already exists"
         number: "Card with this number already exists"
       not-found-by:
-        Id: "Card with this ID already exists"
+        Id: "Card with this ID was not found"
         number: "Card with this number was not found"
       wrong-owner-exception: "The card owner doesn’t match the user’s card owner."
       equal-id: "These cards are the same"
       not-enough-balance: "Insufficient funds"
+      card-expiry: "Invalid card expiry date"

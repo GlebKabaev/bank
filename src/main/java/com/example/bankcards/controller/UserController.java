@@ -2,6 +2,7 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.MoneyTransferDto;
+import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.service.CardService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,9 @@ import java.util.List;
 public class UserController {
     private final CardService cardService;
 
-    @GetMapping("/card")
-    public List<CardDto> getCards() {
-        return cardService.getUsersCard();
+    @GetMapping("/card/{status}/{page}")
+    public List<CardDto> getCards(@PathVariable("page") int page, @PathVariable("status") CardStatus cardStatus) {
+        return cardService.getUsersCard(page, cardStatus);
     }
 
     @PostMapping("/transfer")

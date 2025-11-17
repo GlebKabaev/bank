@@ -25,8 +25,7 @@ public class CreateCardRequest {
     @Min(value = 1)
     @Max(value = 12)
     private int expiryMonth;
-
-    @Min(value = 2025)
+    
     private int expiryYear;
 
     @NotNull

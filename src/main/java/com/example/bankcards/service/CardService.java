@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -47,7 +48,7 @@ public class CardService {
 
     @Transactional
     public void createCard(CreateCardRequest card) {
-        cardValidatorService.ensureCardNotExistsByNumber(card.getNumber());
+        cardValidatorService.validateCardCreate(card);
         Card cardEntity = toCardEntity(card);
         cardValidatorService.validateCardMatchWithUser(cardEntity);
         cardRepository.save(cardEntity);
@@ -99,9 +100,18 @@ public class CardService {
         return "**** **** **** " + number.substring(len - 4);
     }
 
-    @Transactional(readOnly = true)
-    public List<CardDto> getUsersCard() {
-        return userService.getCurrentUser().getCards().stream().map(this::toCardDto).toList();
+    public List<CardDto> getUsersCard(int page, CardStatus status) {
+        final int size = 2;
+        List<Card> allCards = userService.getCurrentUser().getCards();
+        List<Card> filteredCards = (status == null)
+                ? allCards
+                : allCards.stream().filter(card -> card.getStatus() == status).toList();
+        int from = (page - 1) * size;
+        if (from >= filteredCards.size() || from < 0) {
+            return Collections.emptyList();
+        }
+        int to = Math.min(from + size, filteredCards.size());
+        return filteredCards.subList(from, to).stream().map(this::toCardDto).toList();
     }
 
     @Transactional
