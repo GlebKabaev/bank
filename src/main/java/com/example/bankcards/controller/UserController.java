@@ -2,8 +2,11 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.MoneyTransferDto;
+import com.example.bankcards.dto.TicketDto;
 import com.example.bankcards.entity.CardStatus;
+import com.example.bankcards.entity.Ticket;
 import com.example.bankcards.service.CardService;
+import com.example.bankcards.service.TicketService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +22,7 @@ import java.util.List;
 @Tag(name = "Пользователь")
 public class UserController {
     private final CardService cardService;
-
+    private final TicketService ticketService;
     @GetMapping("/card/{status}/{page}")
     public List<CardDto> getCards(@PathVariable("page") int page, @PathVariable("status") CardStatus cardStatus) {
         return cardService.getUsersCard(page, cardStatus);
@@ -29,6 +32,12 @@ public class UserController {
     public ResponseEntity<String> transfer(@RequestBody MoneyTransferDto moneyTransferDto) {
         cardService.moneyTransfer(moneyTransferDto);
         return ResponseEntity.ok("Перевод произведен успешно");
+    }
+    @PostMapping("/ticket")
+    public ResponseEntity<String> createTicket(@RequestBody TicketDto ticket){
+
+         ticketService.createTicket(ticket);
+         return ResponseEntity.ok("Заявка успешно создана");
     }
 
 }
