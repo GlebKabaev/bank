@@ -16,12 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +41,7 @@ public class CardService {
 
     @Transactional
     public void deleteCard(UUID id) {
-        cardValidatorService.validateCardExistsById(id);
+        cardValidatorService.validateCardExists(id);
         cardRepository.deleteById(id);
     }
 
@@ -58,18 +54,18 @@ public class CardService {
         cardRepository.save(cardEntity);
     }
     public Card findCardById(UUID id){
-        cardValidatorService.validateCardExistsById(id);
+        cardValidatorService.validateCardExists(id);
         return cardRepository.findById(id).get();
     }
 
     @Transactional
-    public void blockCard(UUID id) {
+    public void blockCard(UUID id) {//TODO: validate
         Card card = findCardById(id);
         card.setStatus(CardStatus.BLOCKED);
     }
 
     @Transactional
-    public void activateCard(UUID id) {
+    public void activateCard(UUID id) {//TODO: validate
         Card card = findCardById(id);
         card.setStatus(CardStatus.ACTIVE);
     }

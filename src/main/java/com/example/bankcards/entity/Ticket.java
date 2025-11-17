@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "tickets_to_block")
+@Table(name = "tickets")
 public class Ticket {
     @Id
     @Column(name = "id", columnDefinition = "uuid")

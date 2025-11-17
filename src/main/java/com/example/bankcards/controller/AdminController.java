@@ -3,8 +3,11 @@ package com.example.bankcards.controller;
 
 import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.CreateCardRequest;
+import com.example.bankcards.dto.TicketDto;
 import com.example.bankcards.entity.Card;
+import com.example.bankcards.repository.TicketRepository;
 import com.example.bankcards.service.CardService;
+import com.example.bankcards.service.TicketService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,35 +24,45 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Tag(name = "Администратор")
 public class AdminController {
+    private final TicketService ticketService;
     private final CardService cardService;
 
     @GetMapping("/card")
-    public ResponseEntity<List<CardDto>> getAllCards() {
+    public ResponseEntity<List<CardDto>> allCards() {
         return ResponseEntity.ok(cardService.findAllCards());
     }
 
     @GetMapping("/card/user/{userID}")
-    public ResponseEntity<List<CardDto>> getAllUserCards(@PathVariable("userID") UUID userID) {
+    public ResponseEntity<List<CardDto>> allUserCards(@PathVariable("userID") UUID userID) {
         return ResponseEntity.ok(cardService.findCardsByUser(userID));
     }
+
     @DeleteMapping("/card/{cardId}")
     public ResponseEntity<Void> deleteCard(@PathVariable UUID cardId) {
         cardService.deleteCard(cardId);
         return ResponseEntity.noContent().build();
     }
+
     @PostMapping("/card")
     public ResponseEntity<String> createCard(@RequestBody @Valid CreateCardRequest card) {
         cardService.createCard(card);
         return ResponseEntity.ok("Карта успешно создана");
     }
+
     @PatchMapping("/card/{cardId}/block")
     public ResponseEntity<String> blockCard(@PathVariable UUID cardId) {
         cardService.blockCard(cardId);
         return ResponseEntity.ok("Карта успешно заблокирована");
     }
+
     @PatchMapping("/card/{cardId}/activate")
     public ResponseEntity<String> activateCard(@PathVariable UUID cardId) {
         cardService.activateCard(cardId);
         return ResponseEntity.ok("Карта успешно активирована");
+    }
+
+    @GetMapping("/ticket")
+    public ResponseEntity<List<TicketDto>> tickets() {
+        return ResponseEntity.ok(ticketService.getAllTickets());
     }
 }

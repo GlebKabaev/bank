@@ -44,3 +44,7 @@ app:
       equal-id: "These cards are the same"
       not-enough-balance: "Insufficient funds"
       card-expiry: "Invalid card expiry date"
+      card-status: "Invalid card status"
+  ticket:
+    already-exists-by:
+      cardId: "Ticket with this card ID already exists"
