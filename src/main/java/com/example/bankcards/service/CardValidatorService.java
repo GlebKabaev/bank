@@ -58,9 +58,12 @@ public class CardValidatorService {
             throw new CardNotFoundException(cardNotFoundByIdMessage);
         }
     }
-
     public void validateCardMatchWithUser(Card card) {
-        if (!card.getUser().getCards().isEmpty() && !card.getUser().getCards().getFirst().getOwner().equals(card.getOwner())) {
+        boolean hasAnyCard = cardRepository.existsByUser_Id(card.getUser().getId());
+
+        if (hasAnyCard && !cardRepository.findFirstByUser_Id(card.getUser().getId())
+                        .getOwner()
+                        .equals(card.getOwner())) {
             throw new CardOwnerException(wrongCardOwnerException);
         }
     }
@@ -84,8 +87,7 @@ public class CardValidatorService {
 
     }
 
-    public void validateCardCreate(CreateCardRequest card) {
-        ensureCardNotExistsByNumber(card.getNumber());
+    public void validateExpiryDate(CreateCardRequest card) {
         LocalDate today = LocalDate.now();
         int todayYear = today.getYear();
         int todayMonth = today.getMonthValue();

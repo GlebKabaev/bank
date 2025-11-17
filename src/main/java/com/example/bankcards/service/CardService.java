@@ -11,6 +11,9 @@ import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -48,7 +51,8 @@ public class CardService {
 
     @Transactional
     public void createCard(CreateCardRequest card) {
-        cardValidatorService.validateCardCreate(card);
+        cardValidatorService.ensureCardNotExistsByNumber(card.getNumber());
+        cardValidatorService.validateExpiryDate(card);
         Card cardEntity = toCardEntity(card);
         cardValidatorService.validateCardMatchWithUser(cardEntity);
         cardRepository.save(cardEntity);
@@ -102,28 +106,21 @@ public class CardService {
 
     public List<CardDto> getUsersCard(int page, CardStatus status) {
         final int size = 2;
-        List<Card> allCards = userService.getCurrentUser().getCards();
-        List<Card> filteredCards = (status == null)
-                ? allCards
-                : allCards.stream().filter(card -> card.getStatus() == status).toList();
-        int from = (page - 1) * size;
-        if (from >= filteredCards.size() || from < 0) {
-            return Collections.emptyList();
-        }
-        int to = Math.min(from + size, filteredCards.size());
-        return filteredCards.subList(from, to).stream().map(this::toCardDto).toList();
+        Pageable pageable = PageRequest.of(page - 1, size);
+        UUID userId = userService.getCurrentUser().getId();
+        Page<Card> cardPage = cardRepository.findByUserIdAndStatus(userId, status, pageable);
+        return cardPage.getContent().stream().map(this::toCardDto).toList();
     }
+
 
     @Transactional
     public void moneyTransfer(MoneyTransferDto moneyTransferDto) {
-        UUID from = moneyTransferDto.getFromCardId();
-        UUID to = moneyTransferDto.getToCardId();
+        UUID fromId = moneyTransferDto.getFromCardId();
+        UUID toId = moneyTransferDto.getToCardId();
         BigDecimal amount = moneyTransferDto.getAmount();
-        cardValidatorService.ensureCardIdNotEquals(from, to);
-        Map<UUID, Card> cardById = userService.getCurrentUser().getCards().stream()
-                .collect(Collectors.toMap(Card::getId, Function.identity()));
-        Card fromCard = cardById.get(from);
-        Card toCard = cardById.get(to);
+        UUID userId = userService.getCurrentUser().getId();
+        Card fromCard = cardRepository.findCardByIdAndUser_Id(fromId, userId);
+        Card toCard = cardRepository.findCardByIdAndUser_Id(toId, userId);
         cardValidatorService.validateTransfer(fromCard, toCard, amount);
         fromCard.setBalance(fromCard.getBalance().subtract(amount));
         toCard.setBalance(toCard.getBalance().add(amount));
