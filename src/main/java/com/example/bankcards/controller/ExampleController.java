@@ -29,6 +29,7 @@ public class ExampleController {
         return "Hello, admin!";
     }
 
+    //TODO удалить
     @GetMapping("/get-admin")
     @Operation(summary = "Получить роль ADMIN (для демонстрации)")
     public void getAdmin() {

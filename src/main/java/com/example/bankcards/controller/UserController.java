@@ -4,10 +4,11 @@ import com.example.bankcards.dto.CardDto;
 import com.example.bankcards.dto.MoneyTransferDto;
 import com.example.bankcards.dto.TicketDto;
 import com.example.bankcards.entity.CardStatus;
-import com.example.bankcards.entity.Ticket;
 import com.example.bankcards.service.CardService;
 import com.example.bankcards.service.TicketService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,23 +22,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @Tag(name = "Пользователь")
 public class UserController {
+
     private final CardService cardService;
     private final TicketService ticketService;
+
     @GetMapping("/card/{status}/{page}")
-    public List<CardDto> getCards(@PathVariable("page") int page, @PathVariable("status") CardStatus cardStatus) {
+    @Operation(summary = "Получение карт пользователя по статусу и странице")
+    public List<CardDto> getCards(
+            @Parameter(description = "Номер страницы") @PathVariable("page") int page,
+            @Parameter(description = "Статус карты") @PathVariable("status") CardStatus cardStatus) {
+
         return cardService.getUsersCard(page, cardStatus);
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer(@RequestBody MoneyTransferDto moneyTransferDto) {
+    @Operation(summary = "Перевод денежных средств между картами пользователя")
+    public ResponseEntity<String> transfer(
+            @Parameter(description = "Данные для перевода средств")
+            @RequestBody MoneyTransferDto moneyTransferDto) {
+
         cardService.moneyTransfer(moneyTransferDto);
         return ResponseEntity.ok("Перевод произведен успешно");
     }
+
     @PostMapping("/ticket")
-    public ResponseEntity<String> createTicket(@RequestBody TicketDto ticket){
+    @Operation(summary = "Создание тикета в службу поддержки для блокировки")
+    public ResponseEntity<String> createTicket(
+            @Parameter(description = "Данные тикета")
+            @RequestBody TicketDto ticket) {
 
-         ticketService.createTicket(ticket);
-         return ResponseEntity.ok("Заявка успешно создана");
+        ticketService.createTicket(ticket);
+        return ResponseEntity.ok("Заявка успешно создана");
     }
-
 }

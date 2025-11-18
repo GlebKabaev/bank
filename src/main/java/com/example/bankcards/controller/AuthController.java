@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-
+import io.swagger.v3.oas.annotations.Parameter;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,13 +24,19 @@ public class AuthController {
 
     @Operation(summary = "Регистрация пользователя")
     @PostMapping("/sign-up")
-    public JwtAuthenticationResponse signUp(@RequestBody @Valid SignUpRequest request) {
+    public JwtAuthenticationResponse signUp(
+            @Parameter(description = "Данные пользователя для регистрации")
+            @RequestBody @Valid SignUpRequest request) {
+
         return authenticationService.signUp(request);
     }
 
     @Operation(summary = "Авторизация пользователя")
     @PostMapping("/sign-in")
-    public JwtAuthenticationResponse signIn(@RequestBody @Valid SignInRequest request) {
+    public JwtAuthenticationResponse signIn(
+            @Parameter(description = "Данные пользователя для входа")
+            @RequestBody @Valid SignInRequest request) {
+
         return authenticationService.signIn(request);
     }
 }
