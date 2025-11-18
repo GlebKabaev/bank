@@ -3,13 +3,16 @@ package com.example.bankcards.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.UUID;
 
 @Data
 @Schema(description = "Информация о переводе денежных средств между картами")
+@NoArgsConstructor
 public class MoneyTransferDto {
 
     @NotNull
