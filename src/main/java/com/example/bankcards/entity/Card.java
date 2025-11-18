@@ -1,5 +1,6 @@
 package com.example.bankcards.entity;
 
+import com.example.bankcards.util.CardNumberEncryptor;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +19,9 @@ public class Card {
     @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "number", nullable = false,unique = true)
-    private String number; // TODO хранится зашифрованным
+    @Column(name = "number", nullable = false, unique = true)
+    @Convert(converter = CardNumberEncryptor.class)
+    private String number;
 
     @Column(nullable = false)
     private String owner;
