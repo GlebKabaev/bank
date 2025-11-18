@@ -48,8 +48,8 @@ public class CardService {
     @Transactional
     public void createCard(CreateCardRequest card) {
         cardValidatorService.ensureCardNotExistsByNumber(card.getNumber());
-        cardValidatorService.validateExpiryDate(card);
         Card cardEntity = toCardEntity(card);
+        cardValidatorService.validateExpiryDate(cardEntity);
         cardValidatorService.validateCardMatchWithUser(cardEntity);
         cardRepository.save(cardEntity);
     }
@@ -59,14 +59,18 @@ public class CardService {
     }
 
     @Transactional
-    public void blockCard(UUID id) {//TODO: validate
+    public void blockCard(UUID id) {
         Card card = findCardById(id);
+        cardValidatorService.ensureCardStatusNotBlock(card);
+        cardValidatorService.validateExpiryDate(card);
         card.setStatus(CardStatus.BLOCKED);
     }
 
     @Transactional
-    public void activateCard(UUID id) {//TODO: validate
+    public void activateCard(UUID id) {
         Card card = findCardById(id);
+        cardValidatorService.ensureCardStatusNotActive(card);
+        cardValidatorService.validateExpiryDate(card);
         card.setStatus(CardStatus.ACTIVE);
     }
 

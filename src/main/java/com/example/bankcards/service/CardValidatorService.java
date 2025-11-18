@@ -89,10 +89,14 @@ public class CardValidatorService {
         if (from.getBalance().compareTo(amount) < 0) {
             throw new NotEnoughBalanceException(notEnoughBalanceExceptionMessage);
         }
+        validateCardStatus(from,CardStatus.ACTIVE);
+        validateCardStatus(to,CardStatus.ACTIVE);
+        validateExpiryDate(from);
+        validateExpiryDate(to);
 
     }
 
-    public void validateExpiryDate(CreateCardRequest card) {
+    public void validateExpiryDate(Card card) {
         LocalDate today = LocalDate.now();
         int todayYear = today.getYear();
         int todayMonth = today.getMonthValue();
@@ -105,7 +109,16 @@ public class CardValidatorService {
         if (!card.getStatus().equals(preferredStatus)) {
             throw new CardStatusException(cardStatusException);
         }
-
+    }
+    public void ensureCardStatusNotBlock(Card card){
+        if(card.getStatus().equals(CardStatus.BLOCKED)){
+            throw new CardStatusException(cardStatusException);
+        }
+    }
+    public void ensureCardStatusNotActive(Card card){
+        if(card.getStatus().equals(CardStatus.BLOCKED)){
+            throw new CardStatusException(cardStatusException);
+        }
     }
 
 }
