@@ -46,7 +46,7 @@ public class TicketService {
 
     private TicketDto toTicketDto(Ticket ticket) {
         return TicketDto.builder()
-                .cardId(ticket.getId())
+                .cardId(ticket.getCard().getId())
                 .build();
     }
 }
