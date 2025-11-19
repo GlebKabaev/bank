@@ -8,6 +8,19 @@
 #  - Открыть нужные порты (например, 5432, 8080).
 #  - Настроить volume для хранения данных БД.
 services:
+  bank:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bank
+    ports:
+      - "8081:8081"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/bank
+      DB_USER: myuser
+      DB_PASSWORD: mypassword
+    networks:
+      - app-network
   postgres:
     container_name: postgres
     image: postgres:15
