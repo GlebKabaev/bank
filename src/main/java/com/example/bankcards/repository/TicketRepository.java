@@ -7,4 +7,6 @@ import java.util.UUID;
 
 public interface TicketRepository extends JpaRepository<Ticket, UUID> {
     boolean existsByCard_Id(UUID cardId);
+
+    void deleteByCard_Id(UUID cardId);
 }

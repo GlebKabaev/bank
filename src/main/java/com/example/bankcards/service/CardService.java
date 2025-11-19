@@ -7,6 +7,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.repository.TicketRepository;
 import com.example.bankcards.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,7 @@ public class CardService {
     private final UserRepository userRepository;
     private final UserService userService;
     private final HashService hashService;
+    private final TicketRepository ticketRepository;
 
     @Transactional(readOnly = true)
     public List<CardDto> findAllCards() {
@@ -66,6 +68,7 @@ public class CardService {
         cardValidatorService.ensureCardStatusNotBlock(card);
         cardValidatorService.validateExpiryDate(card);
         card.setStatus(CardStatus.BLOCKED);
+        ticketRepository.deleteByCard_Id(id);
     }
 
     @Transactional
@@ -104,7 +107,6 @@ public class CardService {
                 .numberHash(hashService.hmacSha256(cardNumber))
                 .build();
     }
-
 
 
     private String maskCardNumber(String number) {
