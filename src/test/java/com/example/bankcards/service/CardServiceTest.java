@@ -47,6 +47,9 @@ class CardServiceTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private HashService hashService;
+
     @InjectMocks
     private CardService cardService;
 
@@ -127,17 +130,29 @@ class CardServiceTest {
 
     @Test
     void createCard_shouldSaveCard() {
-        doNothing().when(cardValidatorService).ensureCardNotExistsByNumber(createCardRequest.getNumber());
-        doNothing().when(userValidatorService).validateUserExistsById(userId);
+        String rawNumber = createCardRequest.getNumber();
+        String hashed = "hashed-number";
+
+        when(hashService.hmacSha256(rawNumber)).thenReturn(hashed);
+
+        doNothing().when(cardValidatorService)
+                .ensureCardNotExistsByNumberHash(hashed);
+
+        doNothing().when(userValidatorService)
+                .validateUserExistsById(userId);
+
         when(userRepository.getReferenceById(userId)).thenReturn(user);
+
         doNothing().when(cardValidatorService).validateExpiryDate(any(Card.class));
         doNothing().when(cardValidatorService).validateCardMatchWithUser(any(Card.class));
+
         when(cardRepository.save(any(Card.class))).thenReturn(card);
 
         cardService.createCard(createCardRequest);
 
         verify(cardRepository).save(any(Card.class));
     }
+
 
     @Test
     void findCardById_shouldReturnCard() {
@@ -190,8 +205,11 @@ class CardServiceTest {
 
     @Test
     void toCardEntity_shouldConvertToEntity() {
+        String cardNumber = createCardRequest.getNumber();
+
         doNothing().when(userValidatorService).validateUserExistsById(userId);
         when(userRepository.getReferenceById(userId)).thenReturn(user);
+        when(hashService.hmacSha256(cardNumber)).thenReturn("hashed-card-number");
 
         Card entity = cardService.toCardEntity(createCardRequest);
 
@@ -203,7 +221,9 @@ class CardServiceTest {
         assertEquals(CardStatus.ACTIVE, entity.getStatus());
         assertEquals(BigDecimal.valueOf(1000), entity.getBalance());
         assertEquals(user, entity.getUser());
+        assertEquals("hashed-card-number", entity.getNumberHash());
     }
+
 
     @Test
     void getUsersCard_shouldReturnPagedCards() {

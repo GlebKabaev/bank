@@ -1,6 +1,5 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.CreateCardRequest;
 import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.exception.*;
@@ -45,8 +44,8 @@ public class CardValidatorService {
         this.cardStatusException = cardStatusException;
     }
 
-    public void ensureCardNotExistsByNumber(String number) {
-        if (cardRepository.existsCardByNumber(number)) {
+    public void ensureCardNotExistsByNumberHash(String hash) {
+        if (cardRepository.existsCardByNumberHash(hash)) {
             throw new CardAlreadyExistsException(cardExistsByNumberMessage);
         }
     }
@@ -89,8 +88,8 @@ public class CardValidatorService {
         if (from.getBalance().compareTo(amount) < 0) {
             throw new NotEnoughBalanceException(notEnoughBalanceExceptionMessage);
         }
-        validateCardStatus(from,CardStatus.ACTIVE);
-        validateCardStatus(to,CardStatus.ACTIVE);
+        validateCardStatus(from, CardStatus.ACTIVE);
+        validateCardStatus(to, CardStatus.ACTIVE);
         validateExpiryDate(from);
         validateExpiryDate(to);
 
@@ -110,13 +109,15 @@ public class CardValidatorService {
             throw new CardStatusException(cardStatusException);
         }
     }
-    public void ensureCardStatusNotBlock(Card card){
-        if(card.getStatus().equals(CardStatus.BLOCKED)){
+
+    public void ensureCardStatusNotBlock(Card card) {
+        if (card.getStatus().equals(CardStatus.BLOCKED)) {
             throw new CardStatusException(cardStatusException);
         }
     }
-    public void ensureCardStatusNotActive(Card card){
-        if(card.getStatus().equals(CardStatus.ACTIVE)){
+
+    public void ensureCardStatusNotActive(Card card) {
+        if (card.getStatus().equals(CardStatus.ACTIVE)) {
             throw new CardStatusException(cardStatusException);
         }
     }

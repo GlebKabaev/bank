@@ -19,7 +19,8 @@ public class Card {
     @Column(name = "id", columnDefinition = "uuid")
     private UUID id;
 
-    @Column(name = "number", nullable = false, unique = true)
+
+    @Column(name = "number", nullable = false)
     @Convert(converter = CardNumberEncryptor.class)
     private String number;
 
@@ -38,6 +39,9 @@ public class Card {
 
     @Column(nullable = false)
     private BigDecimal balance;
+
+    @Column(name = "number_hash", nullable = false, unique = true)
+    private String numberHash;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

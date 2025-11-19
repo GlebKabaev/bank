@@ -1,0 +1,171 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1763572329175-1
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cards
+                  name: id
+                  type: uuid
+              - column:
+                  constraints:
+                    nullable: false
+                  name: number
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: owner
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: expiry_month
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: expiry_year
+                  type: INT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: balance
+                  type: DECIMAL
+              - column:
+                  constraints:
+                    nullable: false
+                  name: number_hash
+                  type: VARCHAR(255)
+              - column:
+                  name: user_id
+                  type: uuid
+            tableName: cards
+  - changeSet:
+      id: 1763572329175-2
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_tickets
+                  name: id
+                  type: uuid
+              - column:
+                  name: user_id
+                  type: uuid
+              - column:
+                  name: card_id
+                  type: uuid
+            tableName: tickets
+  - changeSet:
+      id: 1763572329175-3
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: uuid
+              - column:
+                  constraints:
+                    nullable: false
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: password
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: email
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: role
+                  type: VARCHAR(255)
+            tableName: users
+  - changeSet:
+      id: 1763572329175-4
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: number_hash
+            constraintName: uc_cards_number_hash
+            tableName: cards
+  - changeSet:
+      id: 1763572329175-5
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: email
+            constraintName: uc_users_email
+            tableName: users
+  - changeSet:
+      id: 1763572329175-6
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addUniqueConstraint:
+            columnNames: username
+            constraintName: uc_users_username
+            tableName: users
+  - changeSet:
+      id: 1763572329175-7
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: cards
+            constraintName: FK_CARDS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1763572329175-8
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: card_id
+            baseTableName: tickets
+            constraintName: FK_TICKETS_ON_CARD
+            referencedColumnNames: id
+            referencedTableName: cards
+  - changeSet:
+      id: 1763572329175-9
+      author: glebk
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: tickets
+            constraintName: FK_TICKETS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+

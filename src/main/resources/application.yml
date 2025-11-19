@@ -2,13 +2,13 @@ spring:
   application:
     name: bank_rest
   datasource:
-    url: jdbc:postgresql://postgres:5432/bank
+    url: jdbc:postgresql://127.0.0.1:5432/bank
     username: myuser
     password: mypassword
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
-    change-log: classpath:/db/migration/19-01-changelog.xml
+    change-log: classpath:/db/migration/19-01-changelog.yaml
   jpa:
     hibernate:
       ddl-auto: validate
@@ -29,6 +29,7 @@ app:
         email: "User with this email already exists"
         username: "User with this username already exists"
   card:
+    pan-for-number: "fjk93jf9w84jf9w4jf9834jf9wjf3"
     exception-message:
       already-exists-by:
         Id: "Card with this ID already exists"

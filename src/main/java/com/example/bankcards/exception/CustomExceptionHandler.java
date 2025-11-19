@@ -28,4 +28,10 @@ public class CustomExceptionHandler {
         });
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<Map<String, String>> handleServerException(ServerException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("Server", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

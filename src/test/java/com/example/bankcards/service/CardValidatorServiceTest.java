@@ -52,18 +52,18 @@ class CardValidatorServiceTest {
 
     @Test
     void ensureCardNotExistsByNumber_whenCardDoesNotExist_shouldNotThrow() {
-        String number = "1234567890123456";
-        when(cardRepository.existsCardByNumber(number)).thenReturn(false);
+        String numberHash = "1234567890123456";
+        when(cardRepository.existsCardByNumberHash(numberHash)).thenReturn(false);
 
-        assertDoesNotThrow(() -> cardValidatorService.ensureCardNotExistsByNumber(number));
+        assertDoesNotThrow(() -> cardValidatorService.ensureCardNotExistsByNumberHash(numberHash));
     }
 
     @Test
     void ensureCardNotExistsByNumber_whenCardExists_shouldThrowCardAlreadyExistsException() {
-        String number = "1234567890123456";
-        when(cardRepository.existsCardByNumber(number)).thenReturn(true);
+        String numberHash = "1234567890123456";
+        when(cardRepository.existsCardByNumberHash(numberHash)).thenReturn(true);
 
-        assertThrows(CardAlreadyExistsException.class, () -> cardValidatorService.ensureCardNotExistsByNumber(number));
+        assertThrows(CardAlreadyExistsException.class, () -> cardValidatorService.ensureCardNotExistsByNumberHash(numberHash));
     }
 
     @Test
@@ -309,7 +309,7 @@ class CardValidatorServiceTest {
     @Test
     void ensureCardStatusNotActive_whenNotBlocked_shouldNotThrow() {
         Card card = createCard();
-        card.setStatus(CardStatus.ACTIVE);
+        card.setStatus(CardStatus.BLOCKED);
 
         assertDoesNotThrow(() -> cardValidatorService.ensureCardStatusNotActive(card));
     }
@@ -317,7 +317,7 @@ class CardValidatorServiceTest {
     @Test
     void ensureCardStatusNotActive_whenBlocked_shouldThrowCardStatusException() {
         Card card = createCard();
-        card.setStatus(CardStatus.BLOCKED);
+        card.setStatus(CardStatus.ACTIVE);
 
         assertThrows(CardStatusException.class, () -> cardValidatorService.ensureCardStatusNotActive(card));
     }

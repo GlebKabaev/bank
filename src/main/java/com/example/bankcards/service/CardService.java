@@ -27,6 +27,7 @@ public class CardService {
     private final UserValidatorService userValidatorService;
     private final UserRepository userRepository;
     private final UserService userService;
+    private final HashService hashService;
 
     @Transactional(readOnly = true)
     public List<CardDto> findAllCards() {
@@ -47,13 +48,14 @@ public class CardService {
 
     @Transactional
     public void createCard(CreateCardRequest card) {
-        cardValidatorService.ensureCardNotExistsByNumber(card.getNumber());
+        cardValidatorService.ensureCardNotExistsByNumberHash(hashService.hmacSha256(card.getNumber()));
         Card cardEntity = toCardEntity(card);
         cardValidatorService.validateExpiryDate(cardEntity);
         cardValidatorService.validateCardMatchWithUser(cardEntity);
         cardRepository.save(cardEntity);
     }
-    public Card findCardById(UUID id){
+
+    public Card findCardById(UUID id) {
         cardValidatorService.validateCardExists(id);
         return cardRepository.findById(id).get();
     }
@@ -89,17 +91,21 @@ public class CardService {
     public Card toCardEntity(CreateCardRequest card) {
         userValidatorService.validateUserExistsById(card.getUserId());
         User user = userRepository.getReferenceById(card.getUserId());
+        String cardNumber = (card.getNumber());
         return Card.builder()
                 .id(UUID.randomUUID())
-                .number(card.getNumber())
+                .number(cardNumber)
                 .owner(card.getOwner())
                 .expiryMonth(card.getExpiryMonth())
                 .expiryYear(card.getExpiryYear())
                 .status(card.getStatus())
                 .balance(card.getBalance())
                 .user(user)
+                .numberHash(hashService.hmacSha256(cardNumber))
                 .build();
     }
+
+
 
     private String maskCardNumber(String number) {
         int len = number.length();
