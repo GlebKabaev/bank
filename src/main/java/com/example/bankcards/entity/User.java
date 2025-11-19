@@ -18,7 +18,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
-//TODO: отказаться от имплементации
 public class User implements UserDetails {
     @Id
     @Column(name = "id", columnDefinition = "uuid")
