@@ -116,7 +116,7 @@ public class CardValidatorService {
         }
     }
     public void ensureCardStatusNotActive(Card card){
-        if(card.getStatus().equals(CardStatus.BLOCKED)){
+        if(card.getStatus().equals(CardStatus.ACTIVE)){
             throw new CardStatusException(cardStatusException);
         }
     }
