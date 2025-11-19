@@ -95,6 +95,6 @@ class TicketServiceTest {
         List<TicketDto> result = ticketService.getAllTickets();
 
         assertEquals(1, result.size());
-        assertEquals(ticketId, result.get(0).getCardId());
+        assertEquals(cardId, result.get(0).getCardId());
     }
 }

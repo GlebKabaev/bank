@@ -7,6 +7,7 @@ import com.example.bankcards.entity.Card;
 import com.example.bankcards.entity.CardStatus;
 import com.example.bankcards.entity.User;
 import com.example.bankcards.repository.CardRepository;
+import com.example.bankcards.repository.TicketRepository;
 import com.example.bankcards.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,9 @@ class CardServiceTest {
 
     @Mock
     private HashService hashService;
+
+    @Mock
+    private TicketRepository ticketRepository;
 
     @InjectMocks
     private CardService cardService;
@@ -170,6 +174,7 @@ class CardServiceTest {
         when(cardRepository.findById(cardId)).thenReturn(Optional.of(card));
         doNothing().when(cardValidatorService).ensureCardStatusNotBlock(card);
         doNothing().when(cardValidatorService).validateExpiryDate(card);
+        doNothing().when(ticketRepository).deleteByCard_Id(any(UUID.class));
 
         cardService.blockCard(cardId);
 
