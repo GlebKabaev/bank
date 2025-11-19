@@ -90,6 +90,11 @@
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>4.32.0</version>
+        </dependency>
     </dependencies>
     <dependencyManagement>
         <dependencies>
