@@ -5,12 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @Builder
+@NoArgsConstructor
 @Schema(description = "Информация о запросе на создание тикета для карты")
 public class TicketDto {
 
